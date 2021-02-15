@@ -18,7 +18,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_PAGEUP:
-            if spn_arg < 50:
+            if spn_arg < 49:
                 spn_arg *= 2
         if event.type == pygame.KEYDOWN and event.key == pygame.K_PAGEDOWN:
             if spn_arg > 0.002:
@@ -33,8 +33,6 @@ while running:
         os.remove(map_file)
         pygame.quit()
         sys.exit(1)
-
-    print(spn_arg)
 
     map_file = "map.png"
     with open(map_file, "wb") as file:
