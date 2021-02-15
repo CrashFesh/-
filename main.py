@@ -7,6 +7,7 @@ import requests
 FPS = 120
 
 spn_arg = 0.003
+coords = [2.294363, 48.857501]
 
 pygame.init()
 screen = pygame.display.set_mode((600, 450))
@@ -23,8 +24,29 @@ while running:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_PAGEDOWN:
             if spn_arg > 0.002:
                 spn_arg /= 2
-    map_request = f"https://static-maps.yandex.ru/1.x/?ll=2.294363,48.857501&l=map&spn={spn_arg}" \
-                  f",{spn_arg}"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+            if coords[1] + 3 * spn_arg <= 90:
+                coords[1] += spn_arg
+            else:
+                coords[1] = 90 - spn_arg // 2 - 0.0001
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+            if coords[1] - 3 * spn_arg >= -90:
+                coords[1] -= spn_arg
+            else:
+                coords[1] = -90 + spn_arg // 2 + 0.0001
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
+            if coords[0] - 2 * spn_arg >= -180:
+                coords[0] -= 2 * spn_arg
+            else:
+                coords[0] = 180 + coords[0] - 2 * spn_arg + 180
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+            if coords[0] + 2 * spn_arg <= 180:
+                coords[0] += 2 * spn_arg
+            else:
+                coords[0] = -180 + coords[0] + 2 * spn_arg - 180
+
+    map_request = f"https://static-maps.yandex.ru/1.x/?ll={coords[0]},{coords[1]}&l=map&spn=" \
+                  f"{spn_arg},{spn_arg}"
     response = requests.get(map_request)
     if not response:
         print("Ошибка выполнения запроса:")
@@ -38,6 +60,8 @@ while running:
     with open(map_file, "wb") as file:
         file.write(response.content)
     screen.blit(pygame.image.load(map_file), (0, 0))
+
+    print(coords[0], coords[1])
 
     clock.tick(FPS)
     pygame.display.flip()
