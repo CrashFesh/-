@@ -8,6 +8,7 @@ FPS = 120
 
 spn_arg = 0.003
 coords = [2.294363, 48.857501]
+mode = "map"
 
 pygame.init()
 screen = pygame.display.set_mode((600, 450))
@@ -44,8 +45,14 @@ while running:
                 coords[0] += 2 * spn_arg
             else:
                 coords[0] = -180 + coords[0] + 2 * spn_arg - 180
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+            mode = "map"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+            mode = "sat"
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+            mode = "sat,skl"
 
-    map_request = f"https://static-maps.yandex.ru/1.x/?ll={coords[0]},{coords[1]}&l=map&spn=" \
+    map_request = f"https://static-maps.yandex.ru/1.x/?ll={coords[0]},{coords[1]}&l={mode}&spn=" \
                   f"{spn_arg},{spn_arg}"
     response = requests.get(map_request)
     if not response:
@@ -60,8 +67,6 @@ while running:
     with open(map_file, "wb") as file:
         file.write(response.content)
     screen.blit(pygame.image.load(map_file), (0, 0))
-
-    print(coords[0], coords[1])
 
     clock.tick(FPS)
     pygame.display.flip()
